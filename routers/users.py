@@ -2,6 +2,7 @@ from fastapi import APIRouter, HTTPException
 from fastapi.params import Depends
 from sqlalchemy.orm import Session
 
+from auth import hash_password
 from database import get_db
 from models.user import User
 from schemas.user import UserCreate, UserUpdate
@@ -12,7 +13,7 @@ def create_user(user: UserCreate,
                 db:Session=Depends(get_db)):
     db_user=User(
         email=user.email,
-        password=user.password,
+        password=hash_password(user.password),
         full_name=user.full_name,
     )
     db.add(db_user)

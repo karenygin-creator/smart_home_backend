@@ -4,7 +4,7 @@ from database import get_db
 from models.device import Device
 from models.house import House
 from models.room import Room
-from schemas.device import DeviceCreate, DeviceUpdate
+from schemas.device import DeviceCreate, DeviceUpdate, DeviceStatusUpdate
 
 router = APIRouter(prefix="/devices", tags=["Devices"])
 @router.post("/")
@@ -58,3 +58,13 @@ def delete_device(device_id: int,db:Session=Depends(get_db)):
     db.delete(device)
     db.commit()
     return {"message": "Device deleted"}
+
+@router.patch("/{device_id}/status")
+def change_device_status(device_id: int, data:DeviceStatusUpdate, db:Session=Depends(get_db)):
+    device = db.query(Device).filter(Device.id == device_id).first()
+    if device is None:
+        raise HTTPException(status_code=404, detail="Device not found")
+    device.status = data.status
+    db.commit()
+    db.refresh(device)
+    return {"message": "Device status updated"}

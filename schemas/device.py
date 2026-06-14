@@ -10,3 +10,6 @@ class DeviceUpdate(BaseModel):
     type:str
     status:str
     is_online:bool
+
+class DeviceStatusUpdate(BaseModel):
+    status:str
